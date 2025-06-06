@@ -1,0 +1,123 @@
+<!DOCTYPE html> 
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>访客通行证时间编辑</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background-color: #eeeeee;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .card {
+      position: relative;
+      display: inline-block;
+    }
+
+    .bg {
+      width: 360px;
+    }
+
+    .time-mask {
+      position: absolute;
+      top: 480px;
+      left: 180px;
+      width: 160px;
+      height: 70px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+    }
+
+    .time-text {
+      position: absolute;
+      top: 475px;
+      left: 185px;
+      font-size: 16px;
+      color: black;
+      font-weight: bold;
+      line-height: 1.3em;
+      text-align: center;
+    }
+
+    .input-panel {
+      margin-top: 20px;
+    }
+
+    button {
+      font-size: 16px;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <img src="bg.jpg" class="bg" alt="访客通行证" id="bgImg" />
+    <div class="time-mask"></div>
+    <div class="time-text" id="timeText"></div>
+  </div>
+
+  <div class="input-panel">
+    <button onclick="downloadCard()">导出图片</button>
+  </div>
+
+  <!-- html2canvas -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <!-- 导出功能 -->
+  <script>
+    // 获取当前时间
+    function getCurrentTime() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
+    }
+
+    // 页面加载时设置实时更新时间
+    document.addEventListener('DOMContentLoaded', function() {
+      // 实时更新每秒钟显示的时间
+      setInterval(function() {
+        const currentTime = getCurrentTime();
+        document.getElementById('timeText').innerHTML = `${currentTime}<br>${currentTime}`;
+      }, 1000);
+    });
+
+    function downloadCard() {
+      const card = document.getElementById('card');
+      const img = document.getElementById('bgImg');
+
+      // 确保图片加载完成
+      if (img.complete) {
+        renderCanvas();
+      } else {
+        img.onload = renderCanvas; // 图片加载后渲染画布
+      }
+
+      function renderCanvas() {
+        html2canvas(card, {
+          useCORS: true,   // 允许跨域资源
+          allowTaint: false, // 禁用污点画布
+          backgroundColor: '#ffffff' // 强制设置白底背景
+        }).then(canvas => {
+          const link = document.createElement('a');
+          link.download = '访客通行证.png';
+          link.href = canvas.toDataURL('image/png');
+
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }).catch(err => {
+          alert("图片导出失败：" + err);
+          console.error(err);
+        });
+      }
+    }
+  </script>
+</body>
+</html>
