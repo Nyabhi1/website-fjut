@@ -2,57 +2,149 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>访客通行证时间编辑</title>
+  <title>访客通行证编辑</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
   <style>
     body {
-      font-family: sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       text-align: center;
       background-color: #eeeeee;
       margin: 0;
       padding: 0;
     }
+
     .card {
       position: relative;
       display: inline-block;
       width: 360px;
       height: 730px;
     }
+
     .bg {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    .time-mask {
+
+    /* ===== 大号头像（按模板） ===== */
+    .avatar {
       position: absolute;
+      top: 50px;
+      left: 50px;
+      width: 255px;
+      height: 250px;
+      border-radius: 50%;
+      object-fit: cover;
+      z-index: 30;
+      background: #ffffff;
+    }
+
+    /* ===== 遮罩 ===== */
+    .mask-common {
+      position: absolute;
+      background-color: #f9f9f9;
+      border-radius: 2px;
+      z-index: 10;
+    }
+
+    /* ===== 文本 ===== */
+    .text-common {
+      position: absolute;
+      font-size: 18px;
+      color: #333;
+      font-weight: bold;
+      line-height: 1.3em;
+      text-align: center;
+      z-index: 20;
+      white-space: nowrap;
+    }
+
+    /* 姓名 */
+    .name-mask {
+      top: 360px;
+      left: 35px;
+      width: 80px;
+      height: 25px;
+    }
+    .name-text {
+      top: 360px;
+      left: 35px;
+      width: 80px;
+    }
+
+    /* 车牌 */
+    .car-mask {
+      top: 360px;
+      left: 120px;
+      width: 110px;
+      height: 25px;
+    }
+    .car-text {
+      top: 360px;
+      left: 120px;
+      width: 110px;
+    }
+
+    /* 受访人 */
+    .interviewee-mask {
+      top: 612px;
+      left: 60px;
+      width: 80px;
+      height: 25px;
+    }
+    .interviewee-text {
+      top: 612px;
+      left: 60px;
+      width: 80px;
+    }
+
+    /* 时间 */
+    .time-mask {
       top: 480px;
       left: 180px;
       width: 160px;
       height: 70px;
-      background-color: #f9f9f9;
       border-radius: 4px;
     }
     .time-text {
-      position: absolute;
-      top: 475px;
+      top: 480px;
       left: 185px;
       font-size: 16px;
-      color: black;
-      font-weight: bold;
-      line-height: 1.3em;
-      text-align: center;
+      width: 150px;
+      color: #000;
     }
   </style>
 </head>
+
 <body>
-  <div class="card" id="card">
-    <img src="bg.jpg" class="bg" alt="访客通行证" id="bgImg" />
-    <div class="time-mask"></div>
-    <div class="time-text" id="timeText"></div>
+  <div class="card">
+
+    <!-- 背景 -->
+    <img src="bg1.jpg" class="bg" alt="访客通行证">
+
+    <!-- 大头像（不涉及信息修改） -->
+    <img src="hdy.jpg" class="avatar" alt="头像">
+
+    <!-- 姓名（保持不变） -->
+    <div class="mask-common name-mask"></div>
+    <div class="text-common name-text">齐海韬</div>
+
+    <!-- 车牌（保持不变） -->
+    <div class="mask-common car-mask"></div>
+    <div class="text-common car-text">闽AV8T86</div>
+
+    <!-- 受访人（保持不变） -->
+    <div class="mask-common interviewee-mask"></div>
+    <div class="text-common interviewee-text">黄旭红</div>
+
+    <!-- 时间 -->
+    <div class="mask-common time-mask"></div>
+    <div class="text-common time-text" id="timeText"></div>
+
   </div>
 
   <script>
-    // 获取格式化本地时间字符串
     function formatTime(date) {
       const y = date.getFullYear();
       const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -62,16 +154,14 @@
       return `${y}-${m}-${d} ${hh}:${mm}`;
     }
 
-    // 页面加载后，每秒更新文本区内容
     document.addEventListener('DOMContentLoaded', () => {
       setInterval(() => {
         const now = new Date();
+        const prev1h = new Date(now.getTime() - 60 * 60 * 1000);
+        const next2h = new Date(now.getTime() + 2 * 60 * 60 * 1000);
 
-        const t0 = formatTime(now);
-        const t1 = formatTime(new Date(now.getTime() - 1 * 60 * 60 * 1000)); // 当前前1小时
-        const t2 = formatTime(new Date(now.getTime() + 2 * 60 * 60 * 1000)); // 当前后2小时
-
-        document.getElementById('timeText').innerHTML = `${t1}<br>${t2}`;
+        document.getElementById('timeText').innerHTML =
+          `${formatTime(prev1h)}<br>${formatTime(next2h)}`;
       }, 1000);
     });
   </script>
