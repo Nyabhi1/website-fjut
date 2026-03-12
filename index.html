@@ -19,7 +19,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px 16px;
+      padding: 24px 16px 96px;
       background:
         radial-gradient(circle at top, rgba(226, 237, 251, 0.92), rgba(212, 220, 241, 0.9) 52%, rgba(204, 209, 233, 0.96)),
         linear-gradient(180deg, #eef3ff, #d8ddef);
@@ -40,16 +40,30 @@
       box-shadow: 0 28px 48px rgba(67, 85, 132, 0.16);
       background: #ffffff;
     }
+
+    .fixed-footer {
+      position: fixed;
+      left: 50%;
+      bottom: max(4px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 10;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+      height: auto;
+    }
   </style>
 </head>
 <body>
-  <main class="preview">
+    <main class="preview">
     <canvas id="passCanvas" width="1206" height="2808" aria-label="访客通行证"></canvas>
   </main>
+  <img class="fixed-footer" src="./footer-fixed.png" alt="" aria-hidden="true">
 
   <script>
     const canvas = document.getElementById("passCanvas");
     const ctx = canvas.getContext("2d");
+    const fixedFooter = document.querySelector(".fixed-footer");
 
     const bgImage = new Image();
     const avatarImage = new Image();
@@ -167,6 +181,21 @@
       };
     }
 
+    function snapToHour(date) {
+      const normalized = new Date(date);
+      normalized.setMinutes(0, 0, 0);
+      return normalized;
+    }
+
+    function coverOriginalFooter(context) {
+      context.save();
+      context.fillStyle = "#FAFBFF";
+      context.fillRect(120, 2548, 966, 10);
+      context.fillStyle = "rgba(250, 251, 255, 0.98)";
+      context.fillRect(180, 2668, 846, 64);
+      context.restore();
+    }
+
     function fitFontSize(context, text, startSize, minSize, maxWidth) {
       for (let size = startSize; size >= minSize; size -= 1) {
         context.font = `700 ${size}px ${FONT_STACK}`;
@@ -181,7 +210,7 @@
     function drawAvatarSection(context, timestamp) {
       context.save();
       context.fillStyle = "#FDFEFF";
-      context.fillRect(250, 350, 710, 560);
+      context.fillRect(104, 350, 998, 560);
       context.restore();
 
       const centerX = 603;
@@ -237,12 +266,12 @@
       context.textAlign = "center";
       context.textBaseline = "middle";
       context.font = `700 66px ${FONT_STACK}`;
-      context.fillText("张奕鑫", centerX, 839);
+      context.fillText("张奕鑫", centerX, 800);
       context.restore();
     }
 
     function drawInfoPanel(context) {
-      shadowCard(context, 104, 903, 998, 690, 28, "#FAFBFF");
+      shadowCard(context, 130, 900, 945, 690, 28, "#FAFBFF");
 
       const rows = [
         { label: "访客姓名", value: "张奕鑫", y: 1012 },
@@ -292,13 +321,13 @@
 
     function drawTimePanel(context) {
       const now = new Date();
-      const start = new Date(now.getTime() - 60 * 60 * 1000);
-      const end = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+      const start = snapToHour(new Date(now.getTime() - 60 * 60 * 1000));
+      const end = snapToHour(new Date(now.getTime() + 24 * 60 * 60 * 1000));
 
       const startLines = formatDateLines(start);
       const endLines = formatDateLines(end);
 
-      const panelGradient = context.createLinearGradient(140, 1660, 1060, 1660);
+      const panelGradient = context.createLinearGradient(104, 1660, 1102, 1660);
       panelGradient.addColorStop(0, "#F2F7FF");
       panelGradient.addColorStop(1, "#F6F2FE");
       fillRoundRect(context, 140, 1660, 920, 390, 32, panelGradient);
@@ -328,6 +357,7 @@
       drawAvatarSection(ctx, timestamp);
       drawInfoPanel(ctx);
       drawTimePanel(ctx);
+      coverOriginalFooter(ctx);
     }
 
     function startAnimation() {
@@ -343,11 +373,21 @@
       animationFrameId = window.requestAnimationFrame(animate);
     }
 
+    function syncFixedFooterScale() {
+      if (!fixedFooter || !fixedFooter.naturalWidth) {
+        return;
+      }
+
+      const scale = canvas.getBoundingClientRect().width / canvas.width;
+      fixedFooter.style.width = `${fixedFooter.naturalWidth * scale}px`;
+    }
+
     function waitForImages() {
       return Promise.all([
         bgImage.decode ? bgImage.decode().catch(() => {}) : Promise.resolve(),
         avatarImage.decode ? avatarImage.decode().catch(() => {}) : Promise.resolve()
       ]).then(() => {
+        syncFixedFooterScale();
         render(performance.now());
         startAnimation();
       });
@@ -355,11 +395,27 @@
 
     bgImage.addEventListener("load", () => render(performance.now()));
     avatarImage.addEventListener("load", () => render(performance.now()));
+    fixedFooter.addEventListener("load", syncFixedFooterScale);
     window.addEventListener("load", waitForImages);
-    window.addEventListener("resize", () => render(performance.now()));
+    window.addEventListener("resize", () => {
+      syncFixedFooterScale();
+      render(performance.now());
+    });
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
