@@ -308,8 +308,10 @@
     }
 
     function drawTimeBox(context, x, y, timeLines) {
-      shadowCard(context, x, y, 320, 178, 24, "#FFFFFF");
-      drawClockIcon(context, x + 38, y + 67, 15);
+      const boxWidth = 320;
+      const boxHeight = 178;
+      shadowCard(context, x, y, boxWidth, boxHeight, 24, "#FFFFFF");
+      drawClockIcon(context, x + 38, y + boxHeight / 2, 15);
 
       const topFontSize = 44;
       const bottomFontSize = 44;
