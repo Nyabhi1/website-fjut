@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -27,7 +27,7 @@
     }
 
     .preview {
-      width: min(100%, 430px);
+      width: min(100%, 456px);
       display: flex;
       justify-content: center;
     }
@@ -254,10 +254,16 @@
       context.strokeStyle = "#FFFFFF";
       context.lineWidth = 4;
       context.lineCap = "round";
+      context.lineJoin = "round";
       context.beginPath();
-      context.moveTo(717, 458);
-      context.lineTo(729, 470);
-      context.lineTo(741, 446);
+      context.arc(723, 464, 8, 0, Math.PI * 2);
+      context.stroke();
+      context.beginPath();
+      context.moveTo(729, 458);
+      context.lineTo(740, 447);
+      context.moveTo(734, 447);
+      context.lineTo(740, 447);
+      context.lineTo(740, 453);
       context.stroke();
       context.restore();
 
@@ -404,40 +410,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
