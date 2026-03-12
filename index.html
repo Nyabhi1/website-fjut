@@ -287,14 +287,14 @@
       ];
 
       rows.forEach((row) => {
-        fillRoundRect(context, 156, row.y - 43, 8, 84, 4, "#68C6DD");
+        fillRoundRect(context, 160, row.y - 28, 4, 56, 2, "#3FA8CD");
 
         context.save();
-        context.fillStyle = "#8C92A2";
+        context.fillStyle = "#7E8592";
         context.textAlign = "left";
         context.textBaseline = "middle";
-        context.font = `500 48px ${FONT_STACK}`;
-        context.fillText(row.label, 196, row.y);
+        context.font = `400 42px ${FONT_STACK}`;
+        context.fillText(row.label, 192, row.y);
         context.restore();
 
         context.save();
